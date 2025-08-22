@@ -2,61 +2,11 @@ from deepeval.test_case import LLMTestCase, LLMTestCaseParams
 from deepeval.metrics import GEval
 from deepeval import assert_test
 from local_model import LocalModel
+import json
 
-TEXTS = [
-    {
-        "input": "slab thickness should be 4 in no wait 4.5 inch make sure use rebar number three or maybe number four spacing every 16 center",
-        "expected": """
-            **Concrete Slab Thickness Specifications**
-
-            The recommended slab thickness is 4 inches. However, a maximum of 4.5 inches should be used.
-
-            When incorporating rebar, utilize either rebar number three or rebar number four. Maintain a consistent spacing of 16 inches between the rebar.
-        """
-    },
-    {
-        "input": "order list wood screws nails drywall then for plumbing copper pipe pvc joints faucets sinks toilets and for electrical wire breakers switches",
-        "expected": """
-            **Materials List**
-            The following materials are required for the project:
-
-            *   Wood screws
-            *   Nails
-            *   Drywall
-            *   Plumbing:
-                *   Copper pipe
-                *   PVC joints
-                *   Faucets
-                *   Sinks
-                *   Toilets
-            *   Electrical:
-                *   Wire
-                *   Breakers
-                *   Switches
-        """
-    },
-    {
-        "input": "client said she want kitchen more open concept move sink from window wall to island add dishwasher space upgrade counter top to quartz add backsplash tile she mentioned maybe subway tile or mosaic she not decide also wants list of options appliances fridge stove oven microwave dishwasher and want cost comparison between stainless steel and built-in panel ready",
-        "expected": """
-            Client requests modifications to the kitchen design, aiming for a more open concept. Specifically, she wants to:
-
-            *   Move the sink from the window wall to the island.
-            *   Add dishwasher space.
-            *   Upgrade the countertop to quartz.
-            *   Add a backsplash tile, potentially subway tile or mosaic. She has not yet decided.
-
-            The client also requires a list of appliance options, including:
-
-            *   Refrigerator
-            *   Stove
-            *   Oven
-            *   Microwave
-            *   Dishwasher
-
-            A cost comparison between stainless steel and built-in panel-ready appliances is also requested.
-        """
-    }
-]
+data = []
+with open("dataset.json", "r") as file:
+    data = json.load(file)
 
 def test_case():
     local_model = LocalModel()
@@ -83,7 +33,7 @@ def test_case():
             Deliver only the refined text, no commentary. Do not add information, distort meaning, over-correct, or change the original language.
             Don't include "Here's the refined text:" or similar phrases. Just provide the refined text directly.
 
-            Text to refine: {TEXTS[2]["input"]}
+            Text to refine: {data[12]["input"]}
         """
     )
 
@@ -111,9 +61,9 @@ def test_case():
     )
 
     test_case = LLMTestCase(
-        input=TEXTS[2]["input"],
+        input=data[12]["input"],
         actual_output=actual_output,
-        expected_output=TEXTS[2]["expected"],
+        expected_output=data[12]["expected"],
     )
 
     assert_test(test_case, [correctness_metric])
